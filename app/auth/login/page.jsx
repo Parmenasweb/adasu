@@ -1,0 +1,30 @@
+import LoginForm from "@/components/auth/login-form";
+import { getServerSession } from "next-auth";
+import { options } from "@/app/api/auth/[...nextauth]/options";
+import { redirect } from "next/navigation";
+import { Merriweather } from "next/font/google";
+import { cn } from "@/lib/utils";
+
+const font = Merriweather({
+  subsets: ["cyrillic"],
+  weight: ["700"],
+});
+
+async function LoginPage() {
+  const session = await getServerSession(options);
+  if (session) {
+    redirect("/dashboard");
+  }
+  return (
+    <main
+      className={cn(
+        " text-white flex items-center justify-center h-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-sky-400 to-blue-800",
+        font.className
+      )}
+    >
+      <LoginForm />;
+    </main>
+  );
+}
+
+export default LoginPage;
