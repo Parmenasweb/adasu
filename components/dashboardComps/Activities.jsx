@@ -4,6 +4,7 @@ import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FaRupeeSign } from "react-icons/fa";
 import { FaUser } from "react-icons/fa";
+import { unstable_noStore as noStore } from "next/cache";
 
 import {
   Table,
@@ -30,11 +31,12 @@ export function LoadingActivities() {
 }
 
 function Activities({ activities, isFetching }) {
+  noStore();
   const [filteredActivities, setFilteredActivities] = useState(null);
 
   useEffect(() => {
     activities && setFilteredActivities(activities.reverse());
-  }, []);
+  }, [activities]);
 
   function handleClick(e) {
     e.preventDefault();

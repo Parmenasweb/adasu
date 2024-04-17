@@ -24,8 +24,12 @@ import FormSuccess from "@/components/form-success";
 import { Suspense, useState, useTransition } from "react";
 import LoadingSpinner from "@/components/loadingspinner";
 import { useQuery } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
+import { unstable_noStore as noStore } from "next/cache";
 
 function Finances() {
+  noStore();
+  const { data: session, status } = useSession();
   const [isPending, startTransition] = useTransition();
 
   const [error, setError] = useState("");
@@ -229,121 +233,133 @@ function Finances() {
       {/* ----------------------- add new contribution and expenses ----------------------*/}
 
       <div className="w-[90%] m-auto">
-        <Card className="w-[98%] m-auto">
-          <CardHeader>
-            <CardTitle>Create A New Finance</CardTitle>
-            <CardDescription>
-              Add a new contribution or expenses to the database
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Tabs defaultValue="contribution" className="w-[80%] m-auto">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="contribution">New Contribution</TabsTrigger>
-                <TabsTrigger value="expenses">New Expense</TabsTrigger>
-              </TabsList>
-              <TabsContent value="contribution">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Contribution</CardTitle>
-                    <CardDescription>
-                      Add a new contribution here, The amount entered will be
-                      added to the total revenue.
-                    </CardDescription>
-                  </CardHeader>
-                  <form onSubmit={handleContributionSubmit}>
-                    <CardContent className="space-y-2">
-                      <div className="space-y-1">
-                        <Label>Type</Label>
-                        <Input
-                          name="type"
-                          disabled
-                          defaultValue="contribution"
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <Label>Name</Label>
-                        <Input
-                          onChange={handleContributionChange}
-                          name="studentName"
-                          value={contribution.studentName}
-                          placeholder="john doe"
-                          disabled={isPending}
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <Label>amount</Label>
-                        <Input
-                          onChange={handleContributionChange}
-                          name="amount"
-                          value={contribution.amount}
-                          type="number"
-                          placeholder="Enter amount contributed"
-                          disabled={isPending}
-                        />
-                      </div>
-                    </CardContent>
-                    <CardFooter className="flex flex-col">
-                      <FormError message={error} />
-                      <FormSuccess message={success} />
-                      <Button disabled={isPending} type="submit">
-                        {isPending ? "wait a sec..." : "Add Contribution"}
-                      </Button>
-                    </CardFooter>
-                  </form>
-                </Card>
-              </TabsContent>
-              <TabsContent value="expenses">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>New Expenses</CardTitle>
-                    <CardDescription>
-                      Add a new expenses here, the sum will be deducted from the
-                      total contributed.
-                    </CardDescription>
-                  </CardHeader>
-                  <form onSubmit={handleExpenseSubmit}>
-                    <CardContent className="space-y-2">
-                      <div className="space-y-1">
-                        <Label>Type</Label>
-                        <Input disabled defaultValue="expenses" name="type" />
-                      </div>
-                      <div className="space-y-1">
-                        <Label>Amount</Label>
-                        <Input
-                          onChange={handleExpensesChange}
-                          name="amount"
-                          value={expenses.amount}
-                          type="number"
-                          placeholder="Enter Expense amount"
-                          disabled={isPending}
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <Label>Purpose</Label>
-                        <Input
-                          onChange={handleExpensesChange}
-                          name="purpose"
-                          value={expenses.purpose}
-                          type="text"
-                          placeholder="purpose of the expense"
-                          disabled={isPending}
-                        />
-                      </div>
-                    </CardContent>
-                    <CardFooter className="flex flex-col">
-                      <FormError message={error} />
-                      <FormSuccess message={success} />
-                      <Button disabled={isPending} type="submit">
-                        {isPending ? "Adding Expenses..." : "Add Expense"}
-                      </Button>
-                    </CardFooter>
-                  </form>
-                </Card>
-              </TabsContent>
-            </Tabs>
-          </CardContent>
-        </Card>
+        {session?.role === "user" ? (
+          <>
+            <Card className="w-[98%] m-auto">
+              <CardHeader>
+                <CardTitle>Create A New Finance</CardTitle>
+                <CardDescription>
+                  Add a new contribution or expenses to the database
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Tabs defaultValue="contribution" className="w-[80%] m-auto">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="contribution">
+                      New Contribution
+                    </TabsTrigger>
+                    <TabsTrigger value="expenses">New Expense</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="contribution">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Contribution</CardTitle>
+                        <CardDescription>
+                          Add a new contribution here, The amount entered will
+                          be added to the total revenue.
+                        </CardDescription>
+                      </CardHeader>
+                      <form onSubmit={handleContributionSubmit}>
+                        <CardContent className="space-y-2">
+                          <div className="space-y-1">
+                            <Label>Type</Label>
+                            <Input
+                              name="type"
+                              disabled
+                              defaultValue="contribution"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <Label>Name</Label>
+                            <Input
+                              onChange={handleContributionChange}
+                              name="studentName"
+                              value={contribution.studentName}
+                              placeholder="john doe"
+                              disabled={isPending}
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <Label>amount</Label>
+                            <Input
+                              onChange={handleContributionChange}
+                              name="amount"
+                              value={contribution.amount}
+                              type="number"
+                              placeholder="Enter amount contributed"
+                              disabled={isPending}
+                            />
+                          </div>
+                        </CardContent>
+                        <CardFooter className="flex flex-col">
+                          <FormError message={error} />
+                          <FormSuccess message={success} />
+                          <Button disabled={isPending} type="submit">
+                            {isPending ? "wait a sec..." : "Add Contribution"}
+                          </Button>
+                        </CardFooter>
+                      </form>
+                    </Card>
+                  </TabsContent>
+                  <TabsContent value="expenses">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>New Expenses</CardTitle>
+                        <CardDescription>
+                          Add a new expenses here, the sum will be deducted from
+                          the total contributed.
+                        </CardDescription>
+                      </CardHeader>
+                      <form onSubmit={handleExpenseSubmit}>
+                        <CardContent className="space-y-2">
+                          <div className="space-y-1">
+                            <Label>Type</Label>
+                            <Input
+                              disabled
+                              defaultValue="expenses"
+                              name="type"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <Label>Amount</Label>
+                            <Input
+                              onChange={handleExpensesChange}
+                              name="amount"
+                              value={expenses.amount}
+                              type="number"
+                              placeholder="Enter Expense amount"
+                              disabled={isPending}
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <Label>Purpose</Label>
+                            <Input
+                              onChange={handleExpensesChange}
+                              name="purpose"
+                              value={expenses.purpose}
+                              type="text"
+                              placeholder="purpose of the expense"
+                              disabled={isPending}
+                            />
+                          </div>
+                        </CardContent>
+                        <CardFooter className="flex flex-col">
+                          <FormError message={error} />
+                          <FormSuccess message={success} />
+                          <Button disabled={isPending} type="submit">
+                            {isPending ? "Adding Expenses..." : "Add Expense"}
+                          </Button>
+                        </CardFooter>
+                      </form>
+                    </Card>
+                  </TabsContent>
+                </Tabs>
+              </CardContent>
+            </Card>
+          </>
+        ) : (
+          "you are not authorized"
+        )}
       </div>
       {/* show all expenses and contributions */}
       <h2 className="w-[80%] m-auto">

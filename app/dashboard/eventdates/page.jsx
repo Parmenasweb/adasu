@@ -2,6 +2,7 @@
 import BirthdayTable from "./birthday-table";
 import AddNewEvent from "./AddEvent";
 import { useQuery } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
 
 function EventSkeleton() {
   return (
@@ -78,10 +79,11 @@ export function Events() {
 }
 
 export default function EventPage() {
+  const { data: session, status } = useSession();
   return (
     <div className="grid gap-6 lg:grid-cols-2">
       <Events />
-      <AddNewEvent />
+      {session?.role === "admin" && <AddNewEvent />}
     </div>
   );
 }

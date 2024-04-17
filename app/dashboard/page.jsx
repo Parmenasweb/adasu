@@ -7,8 +7,10 @@ import DashboardCard from "@/components/dashboardComps/dashboardCards";
 import DashboardTabs from "@/components/dashboardComps/dashboardTab";
 import { useEffect, useState, useTransition } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { unstable_noStore as noStore } from "next/cache";
 
 const DashBoard = () => {
+  noStore();
   const getFinance = async () => {
     const response = await fetch("/api/finance");
     const data = await response.json();
@@ -44,7 +46,7 @@ const DashBoard = () => {
         />
         <DashboardTabs />
         <Activities activities={financeQuery.data?.activities} />
-        <DashBoardNews />
+        {/* <DashBoardNews /> */}
         <Notification
           notices={financeQuery.data?.notices}
           isLoading={financeQuery.isLoading}

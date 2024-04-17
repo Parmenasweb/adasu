@@ -22,8 +22,10 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 export default function AllStudents() {
+  const { data: session, status } = useSession();
   const fetchAllStudents = async () => {
     const data = await fetch("/api/user");
     const response = await data.json();
@@ -86,6 +88,7 @@ export default function AllStudents() {
                     <TableCell>{student.department}</TableCell>
                     <TableCell className="flex  justify-between">
                       <Button
+                        disabled={session.role === "user"}
                         onClick={() => {
                           router.push(
                             `/dashboard/editStudent?id=${student._id}`
@@ -96,6 +99,7 @@ export default function AllStudents() {
                         edit
                       </Button>
                       <Button
+                        disabled={session.role === "user"}
                         onClick={() => {
                           router.push(
                             `/dashboard/deleteStudent?id=${student._id}`

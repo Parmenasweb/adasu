@@ -2,7 +2,6 @@
 import { useState, useTransition } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import LoadingSpinner from "@/components/loadingspinner";
 import FormError from "@/components/form-error";
 import FormSuccess from "@/components/form-success";
 import { Label } from "@/components/ui/label";
@@ -105,7 +104,7 @@ function AddNewStudent() {
         } else {
           cleanUpInput(info);
           setError(
-            "An error occured while trying to add this user... try again later"
+            "An error occurred while trying to add this user... try again later"
           );
         }
       });
@@ -117,7 +116,7 @@ function AddNewStudent() {
       setError("All Field is required");
     } else {
       startTransition(async () => {
-        const res = await fetch(`/api/user?query=addLeader`, {
+        const res = await fetch("/api/user?query=addLeader", {
           method: "POST",
           headers: {
             "content-type": "application/json",
@@ -133,7 +132,7 @@ function AddNewStudent() {
         } else {
           cleanLeaderInput();
           setError(
-            "An error occured while trying to add this user... try again later"
+            "An error occurred while trying to add this user... try again later"
           );
         }
       });
@@ -335,7 +334,7 @@ function AddNewStudent() {
       ) : (
         <>
           <h2>Unauthorized</h2>
-          <p>Sorry you don't have the necessary permission </p>
+          <p>Sorry you dont have the necessary permission </p>
         </>
       )}
     </div>
