@@ -10,9 +10,11 @@ import FormSuccess from "../form-success";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
+import { useToast } from "@/components/ui/use-toast";
 
 function LoginForm() {
   const router = useRouter();
+  const { toast } = useToast();
   const [Error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isPending, startTransition] = useTransition();
@@ -47,6 +49,10 @@ function LoginForm() {
           setError("Invalid email or password");
         } else {
           setSuccess("logged In successfully");
+          toast({
+            description:
+              "fasten your seatbelt... you are being redirected to the dashboard",
+          });
           router.replace("/dashboard");
         }
       }

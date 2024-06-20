@@ -16,8 +16,10 @@ import FormError from "../form-error";
 import FormSuccess from "../form-success";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/use-toast";
 
 function RegisterForm() {
+  const { toast } = useToast();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [Error, setError] = useState("");
@@ -57,6 +59,9 @@ function RegisterForm() {
           form.reset();
           const okResponse = await response.json();
           setSuccess(okResponse.message);
+          toast({
+            description: "you are being redirected to the login page",
+          });
           router.push("/auth/login");
         } else {
           const errorData = await response.json();
